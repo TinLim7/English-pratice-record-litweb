@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>English Streak</title>
+    <script src="https://cdn.staticfile.net/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdn.staticfile.net/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.staticfile.net/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3f3f46;
+        }
+
+        body {
+            background-color: #09090b;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            color: #e4e4e7;
+        }
+
+        #root:empty::before {
+            content: "Loading...";
+            display: block;
+            color: #71717a;
+            text-align: center;
+            padding-top: 20vh;
+        }
+
+        /* 布局 */
+        .min-h-screen { min-height: 100vh; }
+        .bg-zinc-950 { background-color: #09090b; }
+        .text-zinc-200 { color: #e4e4e7; }
+        .font-sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .pb-20 { padding-bottom: 5rem; }
+        .relative { position: relative; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .flex-1 { flex: 1; }
+        .flex-shrink-0 { flex-shrink: 0; }
+        .flex-wrap { flex-wrap: wrap; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .justify-end { justify-content: flex-end; }
+        .gap-1 { gap: 0.25rem; }
+        .gap-1\.5 { gap: 0.375rem; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-3 { gap: 0.75rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .ml-auto { margin-left: auto; }
+        .mr-2 { margin-right: 0.5rem; }
+        .mb-1 { margin-bottom: 0.25rem; }
+        .mb-1\.5 { margin-bottom: 0.375rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mt-1 { margin-top: 0.25rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .pt-2 { padding-top: 0.5rem; }
+        .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+        .py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .p-2 { padding: 0.5rem; }
+        .p-3 { padding: 0.75rem; }
+        .p-4 { padding: 1rem; }
+        .p-5 { padding: 1.25rem; }
+        .p-0\.5 { padding: 0.125rem; }
+        .p-0 { padding: 0; }
+        .w-full { width: 100%; }
+        .w-1\/2 { width: 50%; }
+        .w-4 { width: 1rem; }
+        .w-5 { width: 1.25rem; }
+        .w-6 { width: 1.5rem; }
+        .w-8 { width: 2rem; }
+        .w-9 { width: 2.25rem; }
+        .w-10 { width: 2.5rem; }
+        .w-12 { width: 3rem; }
+        .w-16 { width: 4rem; }
+        .w-20 { width: 5rem; }
+        .h-full { height: 100%; }
+        .h-4 { height: 1rem; }
+        .h-5 { height: 1.25rem; }
+        .h-6 { height: 1.5rem; }
+        .h-8 { height: 2rem; }
+        .h-10 { height: 2.5rem; }
+        .h-12 { height: 3rem; }
+        .h-14 { height: 3.5rem; }
+        .h-16 { height: 4rem; }
+        .h-20 { height: 5rem; }
+        .h-24 { height: 6rem; }
+        .min-w-0 { min-width: 0; }
+        .min-w-\[4rem\] { min-width: 4rem; }
+        .max-w-xl { max-width: 36rem; }
+        .max-w-2xl { max-width: 42rem; }
+        .max-w-4xl { max-width: 56rem; }
+        .max-w-7xl { max-width: 80rem; }
+        .max-w-\[1600px\] { max-width: 1600px; }
+        .max-w-sm { max-width: 24rem; }
+        .max-w-md { max-width: 28rem; }
+        .max-h-\[80vh\] { max-height: 80vh; }
+        .aspect-square { aspect-ratio: 1/1; }
+        .overflow-hidden { overflow: hidden; }
+        .overflow-y-auto { overflow-y: auto; }
+
+        /* 文字 */
+        .text-xs { font-size: 0.75rem; line-height: 1rem; }
+        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .text-base { font-size: 1rem; line-height: 1.5rem; }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+        .font-mono { font-family: ui-monospace, SFMono-Regular, monospace; }
+        .italic { font-style: italic; }
+        .tracking-wide { letter-spacing: 0.025em; }
+        .tracking-wider { letter-spacing: 0.05em; }
+        .tracking-tight { letter-spacing: -0.025em; }
+        .leading-relaxed { line-height: 1.625; }
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+
+        /* 颜色 - 文字 */
+        .text-white { color: #fff; }
+        .text-zinc-300 { color: #d4d4d8; }
+        .text-zinc-400 { color: #a1a1aa; }
+        .text-zinc-500 { color: #71717a; }
+        .text-zinc-600 { color: #52525b; }
+        .text-emerald-300 { color: #6ee7b7; }
+        .text-emerald-400 { color: #34d399; }
+        .text-blue-400 { color: #60a5fa; }
+        .text-purple-400 { color: #c084fc; }
+        .text-orange-400 { color: #fb923c; }
+        .text-orange-500 { color: #f97316; }
+        .text-yellow-400 { color: #facc15; }
+        .text-red-500 { color: #ef4444; }
+        .text-black { color: #000; }
+        .text-emerald-950 { color: #022c22; }
+
+        /* 颜色 - 背景 */
+        .bg-zinc-900 { background-color: #18181b; }
+        .bg-zinc-900\/40 { background-color: rgba(24, 24, 27, 0.4); }
+        .bg-zinc-900\/50 { background-color: rgba(24, 24, 27, 0.5); }
+        .bg-zinc-900\/60 { background-color: rgba(24, 24, 27, 0.6); }
+        .bg-zinc-800 { background-color: #27272a; }
+        .bg-zinc-800\/30 { background-color: rgba(39, 39, 42, 0.3); }
+        .bg-zinc-800\/40 { background-color: rgba(39, 39, 42, 0.4); }
+        .bg-zinc-800\/50 { background-color: rgba(39, 39, 42, 0.5); }
+        .bg-zinc-800\/60 { background-color: rgba(39, 39, 42, 0.6); }
+        .bg-zinc-800\/80 { background-color: rgba(39, 39, 42, 0.8); }
+        .bg-zinc-700 { background-color: #3f3f46; }
+        .bg-zinc-950 { background-color: #09090b; }
+        .bg-zinc-950\/95 { background-color: rgba(9, 9, 11, 0.95); }
+        .bg-zinc-950\/80 { background-color: rgba(9, 9, 11, 0.8); }
+        .bg-emerald-500 { background-color: #10b981; }
+        .bg-emerald-500\/10 { background-color: rgba(16, 185, 129, 0.1); }
+        .bg-emerald-500\/20 { background-color: rgba(16, 185, 129, 0.2); }
+        .bg-emerald-600 { background-color: #059669; }
+        .bg-emerald-400 { background-color: #34d399; }
+        .bg-emerald-400\/20 { background-color: rgba(52, 211, 153, 0.2); }
+        .bg-emerald-900\/30 { background-color: rgba(6, 78, 59, 0.3); }
+        .bg-emerald-900\/40 { background-color: rgba(6, 78, 59, 0.4); }
+        .bg-emerald-900\/50 { background-color: rgba(6, 78, 59, 0.5); }
+        .bg-emerald-800 { background-color: #065f46; }
+        .bg-emerald-800\/30 { background-color: rgba(6, 95, 70, 0.3); }
+        .bg-emerald-800\/50 { background-color: rgba(6, 95, 70, 0.5); }
+        .bg-emerald-700\/50 { background-color: rgba(4, 120, 87, 0.5); }
+        .bg-blue-500 { background-color: #3b82f6; }
+        .bg-blue-500\/20 { background-color: rgba(59, 130, 246, 0.2); }
+        .bg-blue-600 { background-color: #2563eb; }
+        .bg-blue-900\/20 { background-color: rgba(30, 58, 138, 0.2); }
+        .bg-indigo-900\/20 { background-color: rgba(30, 27, 75, 0.2); }
+        .bg-orange-500\/20 { background-color: rgba(249, 115, 22, 0.2); }
+        .bg-yellow-500 { background-color: #eab308; }
+        .bg-purple-500 { background-color: #a855f7; }
+        .bg-black { background-color: #000; }
+        .bg-black\/60 { background-color: rgba(0, 0, 0, 0.6); }
+        .bg-black\/80 { background-color: rgba(0, 0, 0, 0.8); }
+        .bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)); }
+        .bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
+        .from-emerald-900\/40 { --tw-gradient-from: rgba(6, 78, 59, 0.4); }
+        .to-zinc-900\/40 { --tw-gradient-to: rgba(24, 24, 27, 0.4); }
+        .from-emerald-900\/30 { --tw-gradient-from: rgba(6, 78, 59, 0.3); }
+        .via-zinc-800\/40 { --tw-gradient-via: rgba(39, 39, 42, 0.4); }
+        .to-emerald-900\/30 { --tw-gradient-to: rgba(6, 78, 59, 0.3); }
+        .from-emerald-500\/20 { --tw-gradient-from: rgba(16, 185, 129, 0.2); }
+        .to-emerald-600\/10 { --tw-gradient-to: rgba(5, 150, 105, 0.1); }
+        .from-blue-900\/20 { --tw-gradient-from: rgba(30, 58, 138, 0.2); }
+        .to-indigo-900\/20 { --tw-gradient-to: rgba(30, 27, 75, 0.2); }
+        .from-emerald-600 { --tw-gradient-from: #059669; }
+        .to-emerald-400 { --tw-gradient-to: #34d399; }
+
+        /* 边框 */
+        .border { border-width: 1px; border-style: solid; }
+        .border-2 { border-width: 2px; }
+        .border-4 { border-width: 4px; }
+        .border-b { border-bottom-width: 1px; }
+        .border-t { border-top-width: 1px; }
+        .border-l { border-left-width: 1px; }
+        .border-r { border-right-width: 1px; }
+        .border-zinc-800\/30 { border-color: rgba(39, 39, 42, 0.3); }
+        .border-zinc-800\/40 { border-color: rgba(39, 39, 42, 0.4); }
+        .border-zinc-800\/50 { border-color: rgba(39, 39, 42, 0.5); }
+        .border-zinc-800\/60 { border-color: rgba(39, 39, 42, 0.6); }
+        .border-zinc-800\/80 { border-color: rgba(39, 39, 42, 0.8); }
+        .border-zinc-700\/50 { border-color: rgba(63, 63, 70, 0.5); }
+        .border-zinc-700 { border-color: #3f3f46; }
+        .border-zinc-600 { border-color: #52525b; }
+        .border-emerald-800\/30 { border-color: rgba(6, 95, 70, 0.3); }
+        .border-emerald-800\/50 { border-color: rgba(6, 95, 70, 0.5); }
+        .border-emerald-500\/20 { border-color: rgba(16, 185, 129, 0.2); }
+        .border-emerald-500\/30 { border-color: rgba(16, 185, 129, 0.3); }
+        .border-blue-800\/30 { border-color: rgba(30, 64, 175, 0.3); }
+        .border-yellow-500\/30 { border-color: rgba(234, 179, 8, 0.3); }
+        .rounded { border-radius: 0.25rem; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .rounded-xl { border-radius: 0.75rem; }
+        .rounded-2xl { border-radius: 1rem; }
+        .rounded-3xl { border-radius: 1.5rem; }
+        .rounded-full { border-radius: 9999px; }
+        .rounded-t { border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; }
+        .rounded-t-lg { border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; }
+        .rounded-b-lg { border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; }
+
+        /* 阴影 */
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); }
+        .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+        .shadow-none { box-shadow: none; }
+        .shadow-\[0_0_6px_rgba\(52\,211\,153\,0\.3\)\] { box-shadow: 0 0 6px rgba(52, 211, 153, 0.3); }
+        .shadow-\[0_0_8px_rgba\(16\,185\,129\,0\.2\)\] { box-shadow: 0 0 8px rgba(16, 185, 129, 0.2); }
+        .shadow-\[0_0_12px_rgba\(52\,211\,153\,0\.4\)\] { box-shadow: 0 0 12px rgba(52, 211, 153, 0.4); }
+        .shadow-\[0_0_12px_rgba\(52\,211\,153\,0\.5\)\] { box-shadow: 0 0 12px rgba(52, 211, 153, 0.5); }
+        .shadow-emerald-500\/5 { box-shadow: 0 0 5px rgba(16, 185, 129, 0.05); }
+        .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+
+        /* 交互 */
+        .hover\:scale-105:hover { transform: scale(1.05); }
+        .hover\:scale-110:hover { transform: scale(1.1); }
+        .active\:scale-90:active { transform: scale(0.9); }
+        .active\:scale-95:active { transform: scale(0.95); }
+        .hover\:bg-zinc-800\/50:hover { background-color: rgba(39, 39, 42, 0.5); }
+        .hover\:bg-zinc-800\/80:hover { background-color: rgba(39, 39, 42, 0.8); }
+        .hover\:bg-zinc-700:hover { background-color: #3f3f46; }
+        .hover\:bg-zinc-700\/50:hover { background-color: rgba(63, 63, 70, 0.5); }
+        .hover\:bg-zinc-900:hover { background-color: #18181b; }
+        .hover\:bg-zinc-900\/50:hover { background-color: rgba(24, 24, 27, 0.5); }
+        .hover\:text-white:hover { color: #fff; }
+        .hover\:text-zinc-300:hover { color: #d4d4d8; }
+        .hover\:text-yellow-400:hover { color: #facc15; }
+        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .transition-colors { transition-property: color, background-color, border-color; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .transition-transform { transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); }
+        .duration-150 { transition-duration: 150ms; }
+        .duration-200 { transition-duration: 200ms; }
+        .duration-300 { transition-duration: 300ms; }
+        .duration-500 { transition-duration: 500ms; }
+        .ease-out { transition-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+        .ease-in-out { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* 网格 */
+        .grid { display: grid; }
+        .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .grid-cols-7 { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+        .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+        /* 定位 */
+        .absolute { position: absolute; }
+        .relative { position: relative; }
+        .fixed { position: fixed; }
+        .sticky { position: sticky; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        .top-0 { top: 0; }
+        .bottom-0 { bottom: 0; }
+        .left-0 { left: 0; }
+        .right-0 { right: 0; }
+        .top-3 { top: 0.75rem; }
+        .top-1\/2 { top: 50%; }
+        .right-3 { right: 0.75rem; }
+        .-top-1 { top: -0.25rem; }
+        .-top-1\.5 { top: -0.375rem; }
+        .-right-1 { right: -0.25rem; }
+        .-right-1\.5 { right: -0.375rem; }
+        .-bottom-0\.5 { bottom: -0.125rem; }
+        .z-10 { z-index: 10; }
+        .z-20 { z-index: 20; }
+        .z-50 { z-index: 50; }
+
+        /* 边框线 */
+        .ring-1 { box-shadow: 0 0 0 1px var(--tw-ring-color, rgba(59, 130, 246, 0.5)); }
+        .ring-2 { box-shadow: 0 0 0 2px var(--tw-ring-color, rgba(59, 130, 246, 0.5)); }
+        .ring-4 { box-shadow: 0 0 0 4px var(--tw-ring-color, rgba(59, 130, 246, 0.5)); }
+        .ring-emerald-500 { --tw-ring-color: #10b981; }
+        .ring-zinc-900 { --tw-ring-color: #18181b; }
+        .ring-offset-1 { --tw-ring-offset-width: 1px; }
+        .ring-offset-2 { --tw-ring-offset-width: 2px; }
+        .ring-offset-zinc-950 { --tw-ring-offset-color: #09090b; }
+        .ring-offset-zinc-900 { --tw-ring-offset-color: #18181b; }
+
+        /* 透明度 */
+        .opacity-50 { opacity: 0.5; }
+        .opacity-60 { opacity: 0.6; }
+        .opacity-70 { opacity: 0.7; }
+        .opacity-80 { opacity: 0.8; }
+        .opacity-90 { opacity: 0.9; }
+        .opacity-0 { opacity: 0; }
+        .opacity-100 { opacity: 1; }
+
+        /* 其他 */
+        .cursor-pointer { cursor: pointer; }
+        .select-none { user-select: none; }
+        .resize-none { resize: none; }
+        .whitespace-nowrap { white-space: nowrap; }
+        .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .line-through { text-decoration: line-through; }
+        .backdrop-blur-xl { backdrop-filter: blur(24px); }
+        .backdrop-blur-sm { backdrop-filter: blur(4px); }
+
+        /* 动画 */
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 2px rgba(249, 115, 22, 0.4)); }
+            50% { transform: scale(1.1); opacity: 0.8; filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.7)); }
+        }
+        .animate-breathe { animation: breathe 2s infinite ease-in-out; }
+
+        @keyframes badge-glow {
+            0%, 100% { filter: drop-shadow(0 0 3px rgba(250, 204, 21, 0.3)); }
+            50% { filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.6)); }
+        }
+        .badge-new { animation: badge-glow 2s infinite ease-in-out; }
+
+        @keyframes progress-fill { from { width: 0; } }
+        .progress-animate { animation: progress-fill 0.5s ease-out forwards; }
+
+        @keyframes bar-grow {
+            from { transform: scaleY(0); }
+        }
+        .bar-animate { animation: bar-grow 0.6s ease-out forwards; transform-origin: bottom; }
+
+        @keyframes slide-in-left {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-slide-left { animation: slide-in-left 0.3s ease-out; }
+
+        @keyframes slide-in-right {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-slide-right { animation: slide-in-right 0.3s ease-out; }
+
+        @keyframes slide-in-top {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-top { animation: slide-in-top 0.3s ease-out; }
+
+        @keyframes fade-in-scale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-scale { animation: fade-in-scale 0.3s ease-out; }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .shimmer {
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes bounce-in {
+            0% { opacity: 0; transform: scale(0.8); }
+            50% { transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .animate-bounce-in { animation: bounce-in 0.4s ease-out; }
+
+        @keyframes ripple {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
+
+        @keyframes progress-stripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 1rem 1rem; }
+        }
+        .progress-stripes {
+            background-image: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent);
+            background-size: 1rem 1rem;
+            animation: progress-stripes 1s linear infinite;
+        }
+
+        @keyframes count-up {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-count { animation: count-up 0.5s ease-out; }
+
+        @keyframes success-pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .success-pop { animation: success-pop 0.3s ease-out; }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        }
+        .pulse-glow { animation: pulse-glow 2s infinite; }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .md\:hidden { display: none; }
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (hover: none) {
+            .hover-scale:hover { transform: none !important; }
+        }
+
+        /* 按钮样式 */
+        .btn-hover {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-hover:hover {
+            transform: translateY(-1px);
+        }
+        .btn-hover:active {
+            transform: translateY(0);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+        }
+
+        .day-cell-hover {
+            transition: all 0.15s ease;
+        }
+        .day-cell-hover:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        /* 输入框 */
+        input, textarea {
+            font-family: inherit;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+        }
+
+        /* 骨架屏 */
+        .skeleton {
+            background: linear-gradient(90deg, #27272a 0%, #3f3f46 50%, #27272a 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        // 单月视图
+        const MonthView = ({ month, monthIndex, year, reads, dailyGoal, onEdit, onPrev, onNext }) => {
+            const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+            const firstDay = new Date(year, monthIndex, 1).getDay();
+            const today = new Date();
+            const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            const getDateKey = (y, m, d) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+            const getColorClass = (minutes) => {
+                if (!minutes || minutes <= 0) return 'bg-zinc-800/50 text-zinc-500';
+                if (minutes < 20) return 'bg-emerald-900/50 text-emerald-300 border border-emerald-800/50';
+                if (minutes < 45) return 'bg-emerald-600 text-white';
+                return 'bg-emerald-400 text-emerald-950 font-bold shadow-[0_0_12px_rgba(52,211,153,0.4)]';
+            };
+
+            const monthMinutes = Array.from({ length: daysInMonth }).reduce((sum, _, i) => {
+                const key = getDateKey(year, monthIndex, i + 1);
+                return sum + (reads[key] || 0);
+            }, 0);
+            const activeDays = Array.from({ length: daysInMonth }).filter((_, i) => {
+                const key = getDateKey(year, monthIndex, i + 1);
+                return reads[key] && reads[key] > 0;
+            }).length;
+            const completedDays = Array.from({ length: daysInMonth }).filter((_, i) => {
+                const key = getDateKey(year, monthIndex, i + 1);
+                return reads[key] && reads[key] >= dailyGoal;
+            }).length;
+
+            return (
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 w-full max-w-xl mx-auto">
+                    <div className="flex items-center justify-between mb-6">
+                        <button
+                            onClick={onPrev}
+                            className="p-2 -ml-2 text-zinc-500 hover:text-white hover:bg-zinc-800/80 rounded-lg transition-all active:scale-95 btn-hover"
+                            title="Previous month"
+                        >
+                            <Icons.ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <div className="text-center animate-fade-scale">
+                            <h2 className="text-2xl font-bold text-white tracking-tight">{month}</h2>
+                            <p className="text-sm text-zinc-500 font-medium">{year}</p>
+                        </div>
+                        <button
+                            onClick={onNext}
+                            className="p-2 -mr-2 text-zinc-500 hover:text-white hover:bg-zinc-800/80 rounded-lg transition-all active:scale-95 btn-hover"
+                            title="Next month"
+                        >
+                            <Icons.ChevronRight className="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    <div className="mb-6 px-2">
+                        <div className="relative overflow-hidden bg-gradient-to-r from-emerald-900/30 via-zinc-800/40 to-emerald-900/30 border border-emerald-800/30 rounded-xl px-4 py-2.5">
+                            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-emerald-400 to-emerald-600"></div>
+                            <p className="text-center text-sm text-zinc-300 font-medium tracking-wide">
+                                "One step at a time, every day counts"
+                            </p>
+                        </div>
+                        <p className="text-[10px] text-zinc-600 text-center mt-2">
+                            Built for 李笑来's Enjoy - Learning English one day at a time
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3 mb-6">
+                        <div className="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-3 text-center card-hover animate-slide-left" style={{ animationDelay: '0ms' }}>
+                            <div className="text-xl font-bold text-emerald-400 animate-count">{monthMinutes}</div>
+                            <div className="text-xs text-zinc-500">Total Minutes</div>
+                        </div>
+                        <div className="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-3 text-center card-hover animate-slide-left" style={{ animationDelay: '100ms' }}>
+                            <div className="text-xl font-bold text-blue-400 animate-count">{activeDays}</div>
+                            <div className="text-xs text-zinc-500">Active Days</div>
+                        </div>
+                        <div className="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-3 text-center card-hover animate-slide-left" style={{ animationDelay: '200ms' }}>
+                            <div className="text-xl font-bold text-purple-400 animate-count">{completedDays}</div>
+                            <div className="text-xs text-zinc-500">Goal Met</div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-7 gap-2">
+                        {Array.from({ length: firstDay }).map((_, i) => (
+                            <div key={`empty-${i}`} className="aspect-square" />
+                        ))}
+                        {Array.from({ length: daysInMonth }).map((_, i) => {
+                            const day = i + 1;
+                            const key = getDateKey(year, monthIndex, day);
+                            const minutes = reads[key] || 0;
+                            const isToday = today.getDate() === day && today.getMonth() === monthIndex && today.getFullYear() === year;
+
+                            return (
+                                <button
+                                    key={day}
+                                    onClick={() => onEdit(monthIndex, day)}
+                                    className={`
+                                        aspect-square rounded-lg flex items-center justify-center text-sm font-medium transition-all
+                                        ${getColorClass(minutes)}
+                                        ${isToday ? 'ring-2 ring-emerald-500 ring-offset-2 ring-offset-zinc-950' : ''}
+                                        active:scale-90 hover:scale-105 day-cell-hover
+                                    `}
+                                    title={minutes > 0 ? `${minutes} minutes` : 'No record'}
+                                >
+                                    {day}
+                                    {minutes > 0 && (
+                                        <span className="absolute -bottom-0.5 text-[8px] opacity-70">{minutes}m</span>
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    <div className="flex items-center justify-center gap-3 mt-6 text-xs text-zinc-500">
+                        <span>0m</span>
+                        <div className="flex gap-1.5">
+                            <div className="w-5 h-5 rounded bg-zinc-800/50"></div>
+                            <div className="w-5 h-5 rounded bg-emerald-900/50 border border-emerald-800/50"></div>
+                            <div className="w-5 h-5 rounded bg-emerald-600"></div>
+                            <div className="w-5 h-5 rounded bg-emerald-400"></div>
+                        </div>
+                        <span>{dailyGoal}m+</span>
+                    </div>
+
+                    <div className="mt-4 bg-zinc-900/40 rounded-lg p-3 card-hover">
+                        <div className="flex justify-between text-xs text-zinc-500 mb-2">
+                            <span>Monthly Progress</span>
+                            <span className="text-emerald-400 font-medium">{Math.round((activeDays / daysInMonth) * 100)}%</span>
+                        </div>
+                        <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                            <div
+                                className={`h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-500 progress-stripes ${
+                                    (activeDays / daysInMonth) >= 1 ? 'success-pop' : ''
+                                }`}
+                                style={{ width: `${Math.min((activeDays / daysInMonth) * 100, 100)}%` }}
+                            ></div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // 统计仪表盘视图
+        const DashboardView = ({ year, monthIndex, reads, dailyGoal, stats, weekTrend, onMonthChange }) => {
+            const today = new Date();
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+            const getDateKey = (y, m, d) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+            const weekStats = useMemo(() => {
+                const activeDays = weekTrend.filter(d => d.minutes > 0).length;
+                const totalMinutes = weekTrend.reduce((sum, d) => sum + d.minutes, 0);
+                const completedDays = weekTrend.filter(d => d.minutes >= dailyGoal).length;
+                return { activeDays, totalMinutes, completedDays };
+            }, [weekTrend, dailyGoal]);
+
+            const monthStats = useMemo(() => {
+                const daysInMonth = new Date(year, today.getMonth() + 1, 0).getDate();
+                let totalMinutes = 0;
+                let activeDays = 0;
+                let completedDays = 0;
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const key = getDateKey(year, today.getMonth(), d);
+                    const minutes = reads[key] || 0;
+                    totalMinutes += minutes;
+                    if (minutes > 0) activeDays++;
+                    if (minutes >= dailyGoal) completedDays++;
+                }
+                return { totalMinutes, activeDays, completedDays, daysInMonth };
+            }, [reads, year, dailyGoal]);
+
+            const thirtyDayTrend = useMemo(() => {
+                const days = [];
+                for (let i = 29; i >= 0; i--) {
+                    const d = new Date(today);
+                    d.setDate(d.getDate() - i);
+                    const key = getDateKey(d.getFullYear(), d.getMonth(), d.getDate());
+                    days.push({ date: d, minutes: reads[key] || 0 });
+                }
+                return days;
+            }, [reads]);
+
+            const achievementProgress = useMemo(() => {
+                const dates = Object.keys(reads);
+                const totalMinutes = Object.values(reads).reduce((sum, m) => sum + (typeof m === 'number' ? m : 0), 0);
+                const totalHours = totalMinutes / 60;
+
+                let currentStreak = 0;
+                let checkDate = new Date();
+                const todayKey = getDateKey(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate());
+                if (!reads[todayKey]) checkDate.setDate(checkDate.getDate() - 1);
+                while (true) {
+                    const dKey = getDateKey(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate());
+                    if (reads[dKey]) { currentStreak++; checkDate.setDate(checkDate.getDate() - 1); } else break;
+                }
+
+                const milestones = [
+                    { type: 'streak', current: currentStreak, next: Math.max(currentStreak + 1, 7) },
+                    { type: 'total', current: dates.length, next: Math.max(dates.length + 1, 10) },
+                    { type: 'hours', current: Math.floor(totalHours), next: Math.floor(totalHours) + 5 }
+                ];
+
+                return { currentStreak, totalDays: dates.length, totalHours: totalHours.toFixed(1), milestones };
+            }, [reads]);
+
+            return (
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-300 w-full max-w-2xl mx-auto space-y-4">
+                    <div className="flex items-center justify-between mb-2">
+                        <button
+                            onClick={() => onMonthChange(monthIndex - 1)}
+                            className="p-2 -ml-2 text-zinc-500 hover:text-white hover:bg-zinc-800/80 rounded-lg transition-all active:scale-95 btn-hover"
+                            title="Previous month"
+                        >
+                            <Icons.ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <div className="text-center animate-fade-scale">
+                            <h2 className="text-xl font-bold text-white tracking-tight">{months[monthIndex]}</h2>
+                            <p className="text-sm text-zinc-500 font-medium">{year}</p>
+                        </div>
+                        <button
+                            onClick={() => onMonthChange(monthIndex + 1)}
+                            className="p-2 -mr-2 text-zinc-500 hover:text-white hover:bg-zinc-800/80 rounded-lg transition-all active:scale-95 btn-hover"
+                            title="Next month"
+                        >
+                            <Icons.ChevronRight className="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-emerald-900/40 to-zinc-900/40 border border-emerald-800/30 rounded-2xl p-5 card-hover animate-slide-left">
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                                <Icons.Target className="w-5 h-5 text-emerald-400" />
+                                <span className="text-sm font-medium text-zinc-300">Today's Goal</span>
+                            </div>
+                            <span className="text-lg font-bold text-emerald-400 animate-count">{stats.todayMinutes}/{dailyGoal}m</span>
+                        </div>
+                        <div className="h-4 bg-zinc-800 rounded-full overflow-hidden">
+                            <div
+                                className={`h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-500 progress-stripes ${
+                                    stats.todayMinutes >= dailyGoal ? 'success-pop' : ''
+                                }`}
+                                style={{ width: `${Math.min((stats.todayMinutes / dailyGoal) * 100, 100)}%` }}
+                            ></div>
+                        </div>
+                        <div className="flex justify-between mt-2 text-xs text-zinc-500">
+                            <span>{stats.todayMinutes >= dailyGoal ? 'Goal achieved!' : `${Math.max(0, dailyGoal - stats.todayMinutes)}m to go`}</span>
+                            <span className="text-emerald-400 font-medium">{Math.round((stats.todayMinutes / dailyGoal) * 100)}%</span>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-zinc-900/60 border border-zinc-800/60 rounded-2xl p-4 card-hover animate-slide-left" style={{ animationDelay: '0ms' }}>
+                            <div className="flex items-center gap-2 mb-2">
+                                <Icons.Flame className="w-5 h-5 text-orange-500 animate-breathe" />
+                                <span className="text-xs text-zinc-500">Streak</span>
+                            </div>
+                            <div className="text-3xl font-bold text-white animate-count">{achievementProgress.currentStreak}</div>
+                            <div className="text-xs text-zinc-500">days in a row</div>
+                        </div>
+                        <div className="bg-zinc-900/60 border border-zinc-800/60 rounded-2xl p-4 card-hover animate-slide-left" style={{ animationDelay: '100ms' }}>
+                            <div className="flex items-center gap-2 mb-2">
+                                <Icons.Clock className="w-5 h-5 text-purple-400" />
+                                <span className="text-xs text-zinc-500">Total</span>
+                            </div>
+                            <div className="text-3xl font-bold text-white animate-count">{stats.totalHours}h</div>
+                            <div className="text-xs text-zinc-500">{stats.totalDays} learning days</div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3">
+                        <div className="bg-zinc-900/40 border border-zinc-800/40 rounded-xl p-3 text-center card-hover animate-slide-left" style={{ animationDelay: '0ms' }}>
+                            <div className="text-xl font-bold text-emerald-400 animate-count">{weekStats.totalMinutes}</div>
+                            <div className="text-xs text-zinc-500">This Week (m)</div>
+                        </div>
+                        <div className="bg-zinc-900/40 border border-zinc-800/40 rounded-xl p-3 text-center card-hover animate-slide-left" style={{ animationDelay: '100ms' }}>
+                            <div className="text-xl font-bold text-blue-400 animate-count">{weekStats.activeDays}</div>
+                            <div className="text-xs text-zinc-500">Week Active</div>
+                        </div>
+                        <div className="bg-zinc-900/40 border border-zinc-800/40 rounded-xl p-3 text-center card-hover animate-slide-left" style={{ animationDelay: '200ms' }}>
+                            <div className="text-xl font-bold text-purple-400 animate-count">{monthStats.totalMinutes}</div>
+                            <div className="text-xs text-zinc-500">This Month (m)</div>
+                        </div>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 border border-blue-800/30 rounded-2xl p-4 card-hover animate-slide-left" style={{ animationDelay: '300ms' }}>
+                        <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0 pulse-glow">
+                                <Icons.Quote className="w-5 h-5 text-blue-400" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-zinc-300 italic leading-relaxed">"{stats.quote}"</p>
+                                <p className="text-xs text-zinc-600 mt-2">- Daily Motivation</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-zinc-900/40 border border-zinc-800/40 rounded-2xl p-4 card-hover animate-slide-left" style={{ animationDelay: '400ms' }}>
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                                <Icons.Calendar className="w-5 h-5 text-emerald-400" />
+                                <span className="text-sm font-medium text-zinc-300">Activity Heatmap</span>
+                            </div>
+                            <span className="text-xs text-zinc-500">Last 30 days</span>
+                        </div>
+                        <div className="flex gap-1">
+                            {thirtyDayTrend.map((day, i) => {
+                                const opacity = day.minutes === 0 ? 0.1 : Math.min(day.minutes / 60, 1);
+                                return (
+                                    <div
+                                        key={i}
+                                        className="flex-1 flex flex-col items-center gap-1 day-cell-hover"
+                                        title={`${day.date.toLocaleDateString()}: ${day.minutes}m`}
+                                    >
+                                        <div
+                                            className={`w-full rounded-sm transition-all ${
+                                                day.minutes >= dailyGoal
+                                                    ? 'bg-emerald-400'
+                                                    : day.minutes > 0
+                                                        ? 'bg-emerald-500'
+                                                        : 'bg-zinc-700'
+                                            }`}
+                                            style={{
+                                                height: '24px',
+                                                opacity: day.minutes > 0 ? 0.5 + opacity * 0.5 : 1
+                                            }}
+                                        ></div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className="flex justify-between mt-2 text-[10px] text-zinc-600">
+                            <span>{thirtyDayTrend[0].date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                            <span>{today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                        </div>
+                    </div>
+
+                    <div className="bg-zinc-900/40 border border-zinc-800/40 rounded-2xl p-4 card-hover animate-slide-left" style={{ animationDelay: '500ms' }}>
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                                <Icons.TrendingUp className="w-5 h-5 text-blue-400" />
+                                <span className="text-sm font-medium text-zinc-300">7-Day Trend</span>
+                            </div>
+                        </div>
+                        <div className="flex items-end justify-between h-24 gap-1">
+                            {weekTrend.map((day, i) => (
+                                <div key={i} className="flex-1 flex flex-col items-center gap-1 day-cell-hover">
+                                    <div className="w-full flex flex-col items-center justify-end h-16">
+                                        <div
+                                            className={`w-full rounded-t transition-all ${
+                                                day.minutes >= dailyGoal
+                                                    ? 'bg-emerald-400'
+                                                    : day.minutes > 0
+                                                        ? 'bg-emerald-600'
+                                                        : 'bg-zinc-700'
+                                            } bar-animate`}
+                                            style={{ height: `${Math.max((day.minutes / 60) * 100, day.minutes > 0 ? 15 : 0)}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="bg-zinc-900/40 border border-zinc-800/40 rounded-2xl p-4 card-hover animate-slide-left" style={{ animationDelay: '600ms' }}>
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                                <Icons.Award className="w-5 h-5 text-yellow-400" />
+                                <span className="text-sm font-medium text-zinc-300">Achievement Progress</span>
+                            </div>
+                            <span className="text-xs text-zinc-500">{stats.unlockedCount}/10 Unlocked</span>
+                        </div>
+                        <div className="space-y-3">
+                            <div>
+                                <div className="flex justify-between text-xs text-zinc-500 mb-1">
+                                    <span>Streak</span>
+                                    <span className="text-orange-400">{achievementProgress.currentStreak} / 100 days</span>
+                                </div>
+                                <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-gradient-to-r from-orange-500 to-orange-400 rounded-full progress-stripes"
+                                        style={{ width: `${Math.min(achievementProgress.currentStreak, 100)}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div className="flex justify-between text-xs text-zinc-500 mb-1">
+                                    <span>Learning Days</span>
+                                    <span className="text-blue-400">{achievementProgress.totalDays} / 365 days</span>
+                                </div>
+                                <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full progress-stripes"
+                                        style={{ width: `${Math.min((achievementProgress.totalDays / 365) * 100, 100)}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div className="flex justify-between text-xs text-zinc-500 mb-1">
+                                    <span>Total Hours</span>
+                                    <span className="text-purple-400">{achievementProgress.totalHours}h / 100h</span>
+                                </div>
+                                <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-gradient-to-r from-purple-500 to-purple-400 rounded-full progress-stripes"
+                                        style={{ width: `${Math.min((achievementProgress.totalHours / 100) * 100, 100)}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center justify-center gap-2 pt-2 text-xs text-zinc-500">
+                        <span>Less</span>
+                        <div className="flex gap-1">
+                            <div className="w-4 h-4 rounded bg-zinc-800"></div>
+                            <div className="w-4 h-4 rounded bg-emerald-900/50"></div>
+                            <div className="w-4 h-4 rounded bg-emerald-600"></div>
+                            <div className="w-4 h-4 rounded bg-emerald-400"></div>
+                        </div>
+                        <span>More</span>
+                    </div>
+                </div>
+            );
+        };
+
+        // 图标组件
+        const Icons = {
+            BookOpen: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>,
+            Trophy: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" /><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" /></svg>,
+            Flame: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" /></svg>,
+            Clock: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>,
+            ChevronLeft: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m15 18-6-6 6-6" /></svg>,
+            ChevronRight: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m9 18 6-6-6-6" /></svg>,
+            X: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 6 6 18M6 6l12 12" /></svg>,
+            Check: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M20 6 9 17l-5-5" /></svg>,
+            Settings: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.39a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>,
+            Download: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>,
+            Upload: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></svg>,
+            Quote: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" {...props}><path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 7.55228 14.017 7V3H19.017C20.6739 3 22.017 4.34315 22.017 6V15C22.017 16.6569 20.6739 18 19.017 18H16.017V21H14.017ZM5.0166 21L5.0166 18C5.0166 16.8954 5.91203 16 7.0166 16H10.0166C10.5689 16 11.0166 15.5523 11.0166 15V9C11.0166 8.44772 10.5689 8 10.0166 8H6.0166C5.46432 8 5.0166 7.55228 5.0166 7V3H10.0166C11.6735 3 13.0166 4.34315 13.0166 6V15C13.0166 16.6569 11.6735 18 10.0166 18H7.0166V21H5.0166Z" /></svg>,
+            Target: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>,
+            Star: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>,
+            Zap: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>,
+            Calendar: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>,
+            Award: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="8" r="7" /><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" /></svg>,
+            TrendingUp: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>,
+            BarChart: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><line x1="12" y1="20" x2="12" y2="10" /><line x1="18" y1="20" x2="18" y2="4" /><line x1="6" y1="20" x2="6" y2="16" /></svg>,
+        };
+
+        const ACHIEVEMENTS = [
+            { id: 'streak7', name: '7 Day Streak', desc: 'Learn for 7 consecutive days', icon: '🔥', req: 7, type: 'streak' },
+            { id: 'streak30', name: '30 Day Streak', desc: 'Learn for 30 consecutive days', icon: '⚡', req: 30, type: 'streak' },
+            { id: 'streak100', name: '100 Day Streak', desc: 'Learn for 100 consecutive days', icon: '💎', req: 100, type: 'streak' },
+            { id: 'total10', name: 'Getting Started', desc: 'Total 10 study days', icon: '🌱', req: 10, type: 'total' },
+            { id: 'total50', name: 'Half Century', desc: 'Total 50 study days', icon: '🎯', req: 50, type: 'total' },
+            { id: 'total100', name: 'Century Club', desc: 'Total 100 study days', icon: '🏆', req: 100, type: 'total' },
+            { id: 'total365', name: 'Year Master', desc: 'Total 365 study days', icon: '👑', req: 365, type: 'total' },
+            { id: 'hours10', name: '10 Hours', desc: 'Study for 10 hours total', icon: '⏰', req: 10, type: 'hours' },
+            { id: 'hours50', name: '50 Hours', desc: 'Study for 50 hours total', icon: '📚', req: 50, type: 'hours' },
+            { id: 'hours100', name: '100 Hours', desc: 'Study for 100 hours total', icon: '🎓', req: 100, type: 'hours' },
+        ];
+
+        function App() {
+            const [year, setYear] = useState(new Date().getFullYear());
+            const [editingDate, setEditingDate] = useState(null);
+            const [tempDuration, setTempDuration] = useState('');
+            const [showSettings, setShowSettings] = useState(false);
+            const [showGoalModal, setShowGoalModal] = useState(false);
+            const [showAchievements, setShowAchievements] = useState(false);
+            const [importString, setImportString] = useState('');
+            const [copySuccess, setCopySuccess] = useState('');
+            const [tempGoal, setTempGoal] = useState(30);
+            const [showNewBadge, setShowNewBadge] = useState(null);
+            const [viewMode, setViewMode] = useState('single');
+            const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+            const [isMobile, setIsMobile] = useState(false);
+
+            useEffect(() => {
+                const checkScreenSize = () => {
+                    setIsMobile(window.innerWidth < 768);
+                };
+                checkScreenSize();
+                window.addEventListener('resize', checkScreenSize);
+                return () => window.removeEventListener('resize', checkScreenSize);
+            }, []);
+
+            const quotes = [
+                "The only way to do great work is to love what you do.",
+                "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+                "Believe you can and you're halfway there.",
+                "Don't watch the clock; do what it does. Keep going.",
+                "The future depends on what you do today.",
+                "It always seems impossible until it's done.",
+                "Quality is not an act, it is a habit.",
+                "Your limitation—it's only your imagination.",
+                "Push yourself, because no one else is going to do it for you."
+            ];
+
+            const [quote, setQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
+
+            const [reads, setReads] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('english-streak-data');
+                    if (!saved) return {};
+                    const parsed = JSON.parse(saved);
+                    const migrated = {};
+                    Object.keys(parsed).forEach(key => {
+                        if (parsed[key] === true) migrated[key] = 30;
+                        else if (typeof parsed[key] === 'number') migrated[key] = parsed[key];
+                    });
+                    return migrated;
+                } catch (e) { return {}; }
+            });
+
+            const [dailyGoal, setDailyGoal] = useState(() => {
+                try { return parseInt(localStorage.getItem('english-streak-goal') || '30', 10); } catch (e) { return 30; }
+            });
+
+            const [unlockedAchievements, setUnlockedAchievements] = useState(() => {
+                try { const saved = localStorage.getItem('english-streak-achievements'); return saved ? JSON.parse(saved) : []; } catch (e) { return []; }
+            });
+
+            const checkAchievements = (newReads, newUnlockedRef) => {
+                const dates = Object.keys(newReads);
+                const totalMinutes = Object.values(newReads).reduce((acc, curr) => acc + (typeof curr === 'number' ? curr : 0), 0);
+                const totalHours = totalMinutes / 60;
+                const totalDays = dates.length;
+
+                let currentStreak = 0;
+                let checkDate = new Date();
+                const todayKey = getDateKey(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate());
+                if (!newReads[todayKey]) checkDate.setDate(checkDate.getDate() - 1);
+                while (true) {
+                    const dKey = getDateKey(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate());
+                    if (newReads[dKey]) { currentStreak++; checkDate.setDate(checkDate.getDate() - 1); } else break;
+                }
+
+                let newOnes = [];
+                ACHIEVEMENTS.forEach(ach => {
+                    if (newUnlockedRef.current.includes(ach.id)) return;
+                    let unlocked = false;
+                    if (ach.type === 'streak' && currentStreak >= ach.req) unlocked = true;
+                    if (ach.type === 'total' && totalDays >= ach.req) unlocked = true;
+                    if (ach.type === 'hours' && totalHours >= ach.req) unlocked = true;
+                    if (unlocked) {
+                        newOnes.push(ach.id);
+                        setShowNewBadge(ach);
+                        setTimeout(() => setShowNewBadge(null), 3000);
+                    }
+                });
+
+                if (newOnes.length > 0) {
+                    newUnlockedRef.current = [...newUnlockedRef.current, ...newOnes];
+                    setUnlockedAchievements(newUnlockedRef.current);
+                    localStorage.setItem('english-streak-achievements', JSON.stringify(newUnlockedRef.current));
+                }
+            };
+
+            const unlockedRef = useRef(unlockedAchievements);
+            useEffect(() => { unlockedRef.current = unlockedAchievements; }, [unlockedAchievements]);
+
+            useEffect(() => {
+                localStorage.setItem('english-streak-data', JSON.stringify(reads));
+                checkAchievements(reads, unlockedRef);
+            }, [reads]);
+
+            useEffect(() => { localStorage.setItem('english-streak-goal', dailyGoal.toString()); }, [dailyGoal]);
+
+            const getDateKey = (y, m, d) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            const getDuration = (m, d) => reads[getDateKey(year, m, d)] || 0;
+
+            const goToPrevMonth = () => {
+                setSelectedMonth(prev => {
+                    if (prev === 0) { setYear(y => y - 1); return 11; }
+                    return prev - 1;
+                });
+            };
+
+            const goToNextMonth = () => {
+                setSelectedMonth(prev => {
+                    if (prev === 11) { setYear(y => y + 1); return 0; }
+                    return prev + 1;
+                });
+            };
+
+            const openEditModal = (monthIndex, day) => {
+                const currentDuration = getDuration(monthIndex, day) || '';
+                setEditingDate({ monthIndex, day });
+                setTempDuration(currentDuration);
+            };
+
+            const saveDuration = () => {
+                if (!editingDate) return;
+                const { monthIndex, day } = editingDate;
+                const dateKey = getDateKey(year, monthIndex, day);
+                const minutes = parseInt(tempDuration, 10);
+                setReads(prev => {
+                    const newState = { ...prev };
+                    if (!isNaN(minutes) && minutes > 0) newState[dateKey] = minutes;
+                    else delete newState[dateKey];
+                    return newState;
+                });
+                setEditingDate(null);
+            };
+
+            const handleExport = () => {
+                const dataStr = JSON.stringify(reads);
+                navigator.clipboard.writeText(dataStr).then(() => {
+                    setCopySuccess('Data copied! Send it to your phone.');
+                    setTimeout(() => setCopySuccess(''), 3000);
+                });
+            };
+
+            const handleImport = () => {
+                try {
+                    const parsed = JSON.parse(importString);
+                    if (confirm("This will overwrite your current data. Are you sure?")) {
+                        setReads(parsed);
+                        setShowSettings(false);
+                        setImportString('');
+                    }
+                } catch (e) { alert("Invalid data string!"); }
+            };
+
+            const weekTrend = useMemo(() => {
+                const days = [];
+                const today = new Date();
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date(today);
+                    d.setDate(d.getDate() - i);
+                    const key = getDateKey(d.getFullYear(), d.getMonth(), d.getDate());
+                    days.push({
+                        day: d.getDate(),
+                        weekday: d.toLocaleDateString('en-US', { weekday: 'short' }),
+                        minutes: reads[key] || 0,
+                        isToday: i === 0
+                    });
+                }
+                return days;
+            }, [reads]);
+
+            const weeklyStats = useMemo(() => {
+                const thisWeek = weekTrend.filter(d => d.minutes > 0);
+                const totalMinutes = thisWeek.reduce((acc, d) => acc + d.minutes, 0);
+                const avgMinutes = thisWeek.length > 0 ? Math.round(totalMinutes / thisWeek.length) : 0;
+                const goalDays = thisWeek.filter(d => d.minutes >= dailyGoal).length;
+                return { totalMinutes, avgMinutes, goalDays, activeDays: thisWeek.length };
+            }, [weekTrend, dailyGoal]);
+
+            const todayProgress = useMemo(() => {
+                const today = new Date();
+                const key = getDateKey(today.getFullYear(), today.getMonth(), today.getDate());
+                const todayMinutes = reads[key] || 0;
+                const percentage = Math.min((todayMinutes / dailyGoal) * 100, 100);
+                return { minutes: todayMinutes, percentage };
+            }, [reads, dailyGoal]);
+
+            const stats = useMemo(() => {
+                const dates = Object.keys(reads).sort();
+                const totalMinutes = Object.values(reads).reduce((acc, curr) => acc + (typeof curr === 'number' ? curr : 0), 0);
+                let currentStreak = 0;
+                let checkDate = new Date();
+                const todayKey = getDateKey(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate());
+                const todayMinutes = reads[todayKey] || 0;
+                if (!reads[todayKey]) checkDate.setDate(checkDate.getDate() - 1);
+                while (true) {
+                    const dKey = getDateKey(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate());
+                    if (reads[dKey]) { currentStreak++; checkDate.setDate(checkDate.getDate() - 1); } else break;
+                }
+                return {
+                    totalDays: dates.length,
+                    totalHours: (totalMinutes / 60).toFixed(1),
+                    currentStreak,
+                    todayMinutes,
+                    todayGoal: dailyGoal,
+                    quote: quote,
+                    unlockedCount: unlockedAchievements.length
+                };
+            }, [reads, year, dailyGoal, quote, unlockedAchievements.length]);
+
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
+            const getDaysInMonth = (m) => new Date(year, m + 1, 0).getDate();
+            const getFirstDayOfMonth = (m) => new Date(year, m, 1).getDay();
+
+            const getColorClass = (minutes) => {
+                if (!minutes || minutes <= 0) return 'bg-zinc-800 text-zinc-500 hover:bg-zinc-700 hover:text-zinc-300';
+                if (minutes < 20) return 'bg-emerald-900/60 text-emerald-400 border border-emerald-800/50';
+                if (minutes < 45) return 'bg-emerald-600 text-white shadow-[0_0_8px_rgba(16,185,129,0.2)]';
+                return 'bg-emerald-400 text-emerald-950 font-bold shadow-[0_0_12px_rgba(52,211,153,0.5)] scale-105 z-10';
+            };
+
+            const maxWeekMinutes = Math.max(...weekTrend.map(d => d.minutes), 1);
+
+            return (
+                <div className="min-h-screen bg-zinc-950 text-zinc-200 font-sans pb-20 selection:bg-emerald-500 selection:text-white relative flex flex-col">
+                    <div className="sticky top-0 z-20 bg-zinc-950/95 backdrop-blur-xl border-b border-zinc-800/60">
+                        <div className="max-w-[1600px] mx-auto px-4 py-3 flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 p-2 rounded-xl border border-emerald-500/20">
+                                        <Icons.BookOpen className="w-5 h-5 text-emerald-400" />
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <button onClick={() => setYear(y => y - 1)} className="text-zinc-500 hover:text-white hover:bg-zinc-800 p-1.5 rounded-lg transition-all btn-hover active:scale-95"><Icons.ChevronLeft className="w-4 h-4" /></button>
+                                        <span className="font-mono text-white font-bold text-lg min-w-[4rem] text-center">{year}</span>
+                                        <button onClick={() => setYear(y => y + 1)} className="text-zinc-500 hover:text-white hover:bg-zinc-800 p-1.5 rounded-lg transition-all btn-hover active:scale-95"><Icons.ChevronRight className="w-4 h-4" /></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="flex bg-zinc-900/80 rounded-xl border border-zinc-800/60 p-0.5">
+                                    <button
+                                        onClick={() => { setViewMode('single'); setSelectedMonth(new Date().getMonth()); }}
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all btn-hover ${viewMode === 'single' ? 'bg-zinc-700 text-white shadow-lg' : 'text-zinc-500 hover:text-white hover:bg-zinc-800/50'}`}
+                                    >
+                                        Month
+                                    </button>
+                                    <button
+                                        onClick={() => { setViewMode('dashboard'); }}
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all btn-hover ${viewMode === 'dashboard' ? 'bg-zinc-700 text-white shadow-lg' : 'text-zinc-500 hover:text-white hover:bg-zinc-800/50'}`}
+                                    >
+                                        Stats
+                                    </button>
+                                    <button
+                                        onClick={() => { setViewMode('year'); setSelectedMonth(null); }}
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all btn-hover ${viewMode === 'year' ? 'bg-zinc-700 text-white shadow-lg' : 'text-zinc-500 hover:text-white hover:bg-zinc-800/50'}`}
+                                    >
+                                        Year
+                                    </button>
+                                </div>
+                                <div className="w-px h-6 bg-zinc-800 mx-1"></div>
+                                <button onClick={() => setShowAchievements(true)} className="relative p-2 text-zinc-500 hover:text-yellow-400 hover:bg-zinc-900 transition-all bg-zinc-900/50 rounded-xl border border-zinc-800/60 btn-hover active:scale-95">
+                                    <Icons.Award className="w-4 h-4" />
+                                    {unlockedAchievements.length > 0 && (
+                                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full text-[9px] text-black font-bold flex items-center justify-center">
+                                            {unlockedAchievements.length}
+                                        </span>
+                                    )}
+                                </button>
+                                <button onClick={() => setShowSettings(true)} className="p-2 text-zinc-500 hover:text-white hover:bg-zinc-900 transition-all bg-zinc-900/50 rounded-xl border border-zinc-800/60 btn-hover active:scale-95">
+                                    <Icons.Settings className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="w-full mx-auto px-4 py-4 flex-1 pb-16">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="flex items-center gap-1.5 text-zinc-400 card-hover rounded-lg px-2 py-1 -mx-2">
+                                <Icons.Flame className={`w-4 h-4 ${stats.currentStreak > 0 ? 'text-orange-500 animate-breathe' : ''}`} />
+                                <span className="text-sm font-medium animate-count">{stats.currentStreak}</span>
+                                <span className="text-xs text-zinc-600">day streak</span>
+                            </div>
+                            <div className="w-px h-4 bg-zinc-800"></div>
+                            <div className="flex items-center gap-1.5 text-zinc-400 card-hover rounded-lg px-2 py-1 -mx-2">
+                                <Icons.Clock className="w-4 h-4 text-purple-400" />
+                                <span className="text-sm font-medium animate-count">{stats.totalHours}</span>
+                                <span className="text-xs text-zinc-600">h total</span>
+                            </div>
+                            <div className="w-px h-4 bg-zinc-800"></div>
+                            <div className="flex items-center gap-1.5 text-zinc-400 card-hover rounded-lg px-2 py-1 -mx-2">
+                                <Icons.Target className="w-4 h-4 text-blue-400" />
+                                <span className="text-sm font-medium animate-count">{stats.totalDays}</span>
+                                <span className="text-xs text-zinc-600">days</span>
+                            </div>
+                            <div className="ml-auto">
+                                <button onClick={() => setShowGoalModal(true)} className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-xs text-zinc-300 transition-all btn-hover">
+                                    <Icons.Target className="w-3.5 h-3.5" />
+                                    Goal: {dailyGoal}m
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex items-end gap-1 mb-6 h-16">
+                            {weekTrend.map((day, i) => (
+                                <div key={i} className="flex-1 flex flex-col items-center gap-1 day-cell-hover">
+                                    <div className="w-full flex flex-col items-center justify-end h-10">
+                                        <div
+                                            className={`w-full rounded-t transition-all duration-300 bar-animate ${
+                                                day.minutes >= dailyGoal
+                                                    ? 'bg-emerald-400'
+                                                    : day.minutes > 0
+                                                        ? 'bg-emerald-600'
+                                                        : 'bg-zinc-800'
+                                            }`}
+                                            style={{ height: `${Math.max((day.minutes / 60) * 100, day.minutes > 0 ? 20 : 0)}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {viewMode === 'dashboard' && (
+                            <DashboardView
+                                year={year}
+                                monthIndex={selectedMonth}
+                                reads={reads}
+                                dailyGoal={dailyGoal}
+                                stats={stats}
+                                weekTrend={weekTrend}
+                                onMonthChange={(newMonthIndex) => {
+                                    let m = newMonthIndex;
+                                    let y = year;
+                                    if (m < 0) { m = 11; y--; }
+                                    if (m > 11) { m = 0; y++; }
+                                    setYear(y);
+                                    setSelectedMonth(m);
+                                }}
+                            />
+                        )}
+
+                        {viewMode === 'single' && selectedMonth !== null && (
+                            <MonthView
+                                month={months[selectedMonth]}
+                                monthIndex={selectedMonth}
+                                year={year}
+                                reads={reads}
+                                dailyGoal={dailyGoal}
+                                onEdit={(m, d) => openEditModal(m, d)}
+                                onPrev={goToPrevMonth}
+                                onNext={goToNextMonth}
+                            />
+                        )}
+
+                        {viewMode === 'year' && (
+                            <div className={`grid gap-4 ${isMobile ? 'grid-cols-1 px-3' : 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto px-4'}`}>
+                                {months.map((month, mIndex) => {
+                                    const isCurrentMonth = new Date().getMonth() === mIndex && new Date().getFullYear() === year;
+                                    const daysInMonth = getDaysInMonth(mIndex);
+                                    const monthMinutes = Array.from({ length: daysInMonth }).reduce((sum, _, i) => {
+                                        return sum + (getDuration(mIndex, i + 1) || 0);
+                                    }, 0);
+                                    const activeDays = Array.from({ length: daysInMonth }).filter((_, i) =>
+                                        getDuration(mIndex, i + 1) > 0
+                                    ).length;
+                                    const monthGoalMet = Array.from({ length: daysInMonth }).filter((_, i) =>
+                                        getDuration(mIndex, i + 1) >= dailyGoal
+                                    ).length;
+
+                                    return (
+                                        <div
+                                            key={month}
+                                            className={`relative rounded-2xl p-4 transition-all duration-300 card-hover ${isCurrentMonth ? 'bg-gradient-to-br from-zinc-900 to-zinc-900/50 border border-emerald-500/20 shadow-lg shadow-emerald-500/5' : 'bg-gradient-to-br from-zinc-900/60 to-zinc-900/30 border border-zinc-800/60'}`}
+                                        >
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div className="flex items-center gap-3">
+                                                    <h3 className={`font-semibold text-base ${isCurrentMonth ? 'text-white' : 'text-zinc-300'}`}>{month}</h3>
+                                                    {isCurrentMonth && (
+                                                        <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-[10px] font-medium rounded-full border border-emerald-500/20">Current</span>
+                                                    )}
+                                                </div>
+                                                <span className={`text-xs font-mono px-2.5 py-1 rounded-lg ${isCurrentMonth ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-zinc-800 text-zinc-500'}`}>
+                                                    {String(mIndex + 1).padStart(2, '0')}
+                                                </span>
+                                            </div>
+
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <div className="flex-1 flex items-center gap-2">
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${monthMinutes > 0 ? 'bg-emerald-400' : 'bg-zinc-700'}`}></div>
+                                                    <span className="text-xs text-zinc-500">{monthMinutes}m</span>
+                                                </div>
+                                                <div className="flex-1 flex items-center gap-2">
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${activeDays > 0 ? 'bg-blue-400' : 'bg-zinc-700'}`}></div>
+                                                    <span className="text-xs text-zinc-500">{activeDays}d</span>
+                                                </div>
+                                                <div className="flex-1 flex items-center gap-2">
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${monthGoalMet > 0 ? 'bg-purple-400' : 'bg-zinc-700'}`}></div>
+                                                    <span className="text-xs text-zinc-500">{monthGoalMet}✓</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-7 gap-1 mb-2">
+                                                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
+                                                    <div key={i} className={`text-center text-[9px] font-medium ${i === 0 || i === 6 ? 'text-zinc-600' : 'text-zinc-500'}`}>{d}</div>
+                                                ))}
+                                            </div>
+
+                                            <div className="grid grid-cols-7 gap-1">
+                                                {Array.from({ length: getFirstDayOfMonth(mIndex) }).map((_, i) => (
+                                                    <div key={`empty-${i}`} className="aspect-square" />
+                                                ))}
+                                                {Array.from({ length: getDaysInMonth(mIndex) }).map((_, i) => {
+                                                    const day = i + 1;
+                                                    const minutes = getDuration(mIndex, day);
+                                                    const isToday = new Date().getDate() === day && new Date().getMonth() === mIndex && new Date().getFullYear() === year;
+
+                                                    return (
+                                                        <button
+                                                            key={day}
+                                                            onClick={() => openEditModal(mIndex, day)}
+                                                            className={`relative aspect-square rounded-lg flex items-center justify-center text-xs font-medium transition-all ${getColorClass(minutes)} ${isToday ? 'ring-2 ring-emerald-500 ring-offset-1 ring-offset-zinc-900' : ''} active:scale-90 hover:scale-105 day-cell-hover`}
+                                                            title={minutes > 0 ? `${minutes} minutes` : 'Click to add'}
+                                                        >
+                                                            {day}
+                                                            {minutes > 0 && <span className="absolute -bottom-0.5 text-[7px] opacity-80 font-medium">{minutes}</span>}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+
+                                            {isCurrentMonth && <div className="absolute top-3 right-3 w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="fixed bottom-0 left-0 right-0 bg-zinc-950/95 backdrop-blur-xl border-t border-zinc-800/80 py-3 px-4 z-10">
+                        <div className="flex items-center justify-center gap-4">
+                            <span className="text-xs text-zinc-500 font-medium">0m</span>
+                            <div className="flex gap-1.5">
+                                <div className="w-4 h-4 rounded bg-zinc-800 border border-zinc-700/50"></div>
+                                <div className="w-4 h-4 rounded bg-emerald-900/60 border border-emerald-800/30"></div>
+                                <div className="w-4 h-4 rounded bg-emerald-600"></div>
+                                <div className="w-4 h-4 rounded bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.3)]"></div>
+                            </div>
+                            <span className="text-xs text-zinc-500 font-medium">{dailyGoal}m+</span>
+                        </div>
+                    </div>
+
+                    {editingDate && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in">
+                            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl shadow-2xl w-full max-w-sm">
+                                <div className="flex justify-between items-center mb-5">
+                                    <h3 className="text-lg font-semibold text-white">{months[editingDate.monthIndex]} {editingDate.day}</h3>
+                                    <button onClick={() => setEditingDate(null)} className="p-2 rounded-full text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800 transition-all duration-200 group">
+                                        <Icons.X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                                    </button>
+                                </div>
+                                <div className="space-y-3">
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="number"
+                                            autoFocus
+                                            placeholder="Minutes..."
+                                            className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white text-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+                                            value={tempDuration}
+                                            onChange={(e) => setTempDuration(e.target.value)}
+                                            onKeyDown={(e) => e.key === 'Enter' && saveDuration()}
+                                        />
+                                        <button onClick={saveDuration} className="bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold px-4 rounded-xl transition-colors active:scale-95">
+                                            <Icons.Check className="w-6 h-6" />
+                                        </button>
+                                    </div>
+                                    <div className="grid grid-cols-4 gap-2 pt-1">
+                                        {[15, 30, 45, 60].map(m => (
+                                            <button
+                                                key={m}
+                                                onClick={() => setTempDuration(m)}
+                                                className="py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs rounded-lg transition-colors active:scale-95"
+                                            >
+                                                {m}m
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {showGoalModal && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl shadow-2xl w-full max-w-sm">
+                                <div className="flex justify-between items-center mb-5">
+                                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                        <Icons.Target className="w-5 h-5 text-emerald-400" /> Daily Goal
+                                    </h3>
+                                    <button onClick={() => setShowGoalModal(false)} className="p-2 rounded-full text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800 transition-all duration-200 group">
+                                        <Icons.X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                                    </button>
+                                </div>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="text-sm text-zinc-400 mb-2 block">Study minutes per day</label>
+                                        <input
+                                            type="number"
+                                            value={tempGoal}
+                                            onChange={(e) => setTempGoal(parseInt(e.target.value) || 0)}
+                                            className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white text-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                                        />
+                                    </div>
+                                    <div className="flex gap-2">
+                                        {[15, 30, 45, 60, 90].map(m => (
+                                            <button
+                                                key={m}
+                                                onClick={() => setTempGoal(m)}
+                                                className={`flex-1 py-2 text-xs rounded-lg transition-colors ${tempGoal === m ? 'bg-emerald-500 text-emerald-950 font-medium' : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300'}`}
+                                            >
+                                                {m}m
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <button
+                                        onClick={() => { setDailyGoal(tempGoal); setShowGoalModal(false); }}
+                                        className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold rounded-xl transition-colors active:scale-95"
+                                    >
+                                        Save Goal
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {showAchievements && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-y-auto">
+                                <div className="flex justify-between items-center mb-5">
+                                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                        <Icons.Award className="w-5 h-5 text-yellow-400" /> Achievements
+                                        <span className="text-xs text-zinc-500 font-normal">({unlockedAchievements.length}/{ACHIEVEMENTS.length})</span>
+                                    </h3>
+                                    <button onClick={() => setShowAchievements(false)} className="p-2 rounded-full text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800 transition-all duration-200 group">
+                                        <Icons.X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                                    </button>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {ACHIEVEMENTS.map(ach => {
+                                        const unlocked = unlockedAchievements.includes(ach.id);
+                                        return (
+                                            <div
+                                                key={ach.id}
+                                                className={`p-3 rounded-xl border transition-all ${unlocked ? 'bg-zinc-800/50 border-yellow-500/30' : 'bg-zinc-900/50 border-zinc-800 opacity-50'}`}
+                                            >
+                                                <div className={`text-2xl mb-2 ${unlocked ? '' : 'grayscale'}`}>{ach.icon}</div>
+                                                <div className={`text-sm font-medium ${unlocked ? 'text-white' : 'text-zinc-500'}`}>{ach.name}</div>
+                                                <div className="text-xs text-zinc-500 mt-1">{ach.desc}</div>
+                                                {unlocked && (
+                                                    <div className="flex items-center gap-1 mt-2 text-emerald-400 text-xs">
+                                                        <Icons.Check className="w-3 h-3" /> Unlocked
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {showSettings && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl shadow-2xl w-full max-w-md">
+                                <div className="flex justify-between items-center mb-5">
+                                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                        <Icons.Settings className="w-5 h-5" /> Data Sync
+                                    </h3>
+                                    <button onClick={() => setShowSettings(false)} className="p-2 rounded-full text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800 transition-all duration-200 group">
+                                        <Icons.X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                                    </button>
+                                </div>
+                                <div className="space-y-4">
+                                    <div className="bg-zinc-950/50 p-4 rounded-xl border border-zinc-800">
+                                        <h4 className="text-emerald-400 text-sm font-medium mb-2 flex items-center gap-2">
+                                            <Icons.Download className="w-4 h-4" /> Export Data
+                                        </h4>
+                                        <p className="text-zinc-500 text-xs mb-3">Copy your data code to move it to another device.</p>
+                                        <button onClick={handleExport} className="w-full py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg text-sm font-medium transition-colors border border-zinc-700 active:scale-95">
+                                            {copySuccess || "Copy Data to Clipboard"}
+                                        </button>
+                                    </div>
+                                    <div className="bg-zinc-950/50 p-4 rounded-xl border border-zinc-800">
+                                        <h4 className="text-blue-400 text-sm font-medium mb-2 flex items-center gap-2">
+                                            <Icons.Upload className="w-4 h-4" /> Import Data
+                                        </h4>
+                                        <p className="text-zinc-500 text-xs mb-3">Paste the data code from another device here.</p>
+                                        <textarea
+                                            value={importString}
+                                            onChange={(e) => setImportString(e.target.value)}
+                                            placeholder='Paste data code here...'
+                                            className="w-full h-20 bg-zinc-900 border border-zinc-700 rounded-lg p-2 text-xs text-zinc-300 focus:outline-none focus:border-blue-500 mb-2 resize-none"
+                                        />
+                                        <button
+                                            onClick={handleImport}
+                                            disabled={!importString}
+                                            className="w-full py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-colors active:scale-95"
+                                        >
+                                            Import & Overwrite
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {showNewBadge && (
+                        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-yellow-500 text-black px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 animate-bounce badge-new">
+                            <span className="text-2xl">{showNewBadge.icon}</span>
+                            <div>
+                                <div className="text-xs font-medium opacity-70">Achievement Unlocked!</div>
+                                <div className="font-bold">{showNewBadge.name}</div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
