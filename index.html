@@ -354,8 +354,19 @@
         .whitespace-nowrap { white-space: nowrap; }
         .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .line-through { text-decoration: line-through; }
-        .backdrop-blur-xl { backdrop-filter: blur(24px); }
-        .backdrop-blur-sm { backdrop-filter: blur(4px); }
+        .backdrop-blur-xl { -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); }
+        .backdrop-blur-sm { -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+        /* Safari: reduce backdrop-filter paint artifacts (green blocks) on sticky/fixed layers */
+        .safari-layer-fix { transform: translateZ(0); backface-visibility: hidden; will-change: transform; isolation: isolate; }
+        .is-safari .safari-layer-fix { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+        /* Safari: fully disable backdrop-filter + heavy animated backgrounds to avoid GPU artifacts after state updates */
+        .is-safari .backdrop-blur-xl,
+        .is-safari .backdrop-blur-sm { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+        .is-safari .progress-stripes {
+            animation: none !important;
+            background-image: linear-gradient(to right, var(--tw-gradient-stops, #059669, #34d399)) !important;
+            background-size: auto !important;
+        }
 
         /* 动画 */
         @keyframes breathe {
@@ -425,12 +436,15 @@
         }
 
         @keyframes progress-stripes {
-            0% { background-position: 0 0; }
-            100% { background-position: 1rem 1rem; }
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: 1rem 1rem, 0 0; }
         }
         .progress-stripes {
-            background-image: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent);
-            background-size: 1rem 1rem;
+            /* Layer stripes on top of the existing Tailwind gradient (prevents overriding bg-gradient-to-*) */
+            background-image:
+                linear-gradient(45deg, rgba(255,255,255,0.12) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.12) 75%, transparent 75%, transparent),
+                linear-gradient(to right, var(--tw-gradient-stops, #059669, #34d399));
+            background-size: 1rem 1rem, auto;
             animation: progress-stripes 1s linear infinite;
         }
 
@@ -1303,7 +1317,7 @@
 
             return (
                 <div className="min-h-screen bg-zinc-950 text-zinc-200 font-sans pb-20 selection:bg-emerald-500 selection:text-white relative flex flex-col">
-                    <div className="sticky top-0 z-20 bg-zinc-950/95 backdrop-blur-xl border-b border-zinc-800/60">
+                    <div className="sticky top-0 z-20 bg-zinc-950/95 backdrop-blur-xl safari-layer-fix border-b border-zinc-800/60">
                         <div className="max-w-[1600px] mx-auto px-4 py-3 flex items-center justify-between gap-4">
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-3">
@@ -1516,7 +1530,7 @@
                         )}
                     </div>
 
-                    <div className="fixed bottom-0 left-0 right-0 bg-zinc-950/95 backdrop-blur-xl border-t border-zinc-800/80 py-3 px-4 z-10">
+                    <div className="fixed bottom-0 left-0 right-0 bg-zinc-950/95 backdrop-blur-xl safari-layer-fix border-t border-zinc-800/80 py-3 px-4 z-10">
                         <div className="flex items-center justify-center gap-4">
                             <span className="text-xs text-zinc-500 font-medium">0m</span>
                             <div className="flex gap-1.5">
@@ -1745,6 +1759,13 @@
                 </div>
             );
         }
+
+        // Safari sometimes shows backdrop-filter artifacts (e.g. green blocks) on sticky/fixed layers.
+        (() => {
+            const ua = navigator.userAgent || '';
+            const isSafari = /safari/i.test(ua) && !/(chrome|chromium|crios|fxios|edgios|opr\/|opios)/i.test(ua);
+            if (isSafari) document.documentElement.classList.add('is-safari');
+        })();
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
