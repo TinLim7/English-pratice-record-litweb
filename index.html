@@ -878,21 +878,22 @@
                                 <span className="text-sm font-medium text-zinc-300">7-Day Trend</span>
                             </div>
                         </div>
-                        <div className="flex items-end justify-between h-24 gap-1">
+                        <div className="flex items-end justify-center h-24 gap-2 overflow-hidden">
                             {weekTrend.map((day, i) => (
-                                <div key={i} className="flex-1 flex flex-col items-center gap-1 day-cell-hover">
-                                    <div className="w-full flex flex-col items-center justify-end h-16">
+                                <div key={i} className="w-10 flex flex-col items-center gap-1 day-cell-hover">
+                                    <div className="w-full flex flex-col items-center justify-end h-16 overflow-hidden rounded-lg bg-zinc-950/40">
                                         <div
-                                            className={`w-full rounded-t transition-all ${
+                                            className={`w-full rounded-lg transition-all bar-animate ${
                                                 day.minutes >= dailyGoal
                                                     ? 'bg-emerald-400'
                                                     : day.minutes > 0
                                                         ? 'bg-emerald-600'
                                                         : 'bg-zinc-700'
-                                            } bar-animate`}
-                                            style={{ height: `${Math.max((day.minutes / 60) * 100, day.minutes > 0 ? 15 : 0)}%` }}
+                                            }`}
+                                            style={{ height: `${Math.min(Math.max((day.minutes / 60) * 100, day.minutes > 0 ? 15 : 0), 100)}%` }}
                                         ></div>
                                     </div>
+                                    <span className={`text-[10px] font-mono ${day.isToday ? 'text-emerald-400' : 'text-zinc-600'}`}>{day.weekday}</span>
                                 </div>
                             ))}
                         </div>
@@ -1313,8 +1314,6 @@
                 return 'bg-emerald-400 text-emerald-950 font-bold shadow-[0_0_12px_rgba(52,211,153,0.5)] scale-105 z-10';
             };
 
-            const maxWeekMinutes = Math.max(...weekTrend.map(d => d.minutes), 1);
-
             return (
                 <div className="min-h-screen bg-zinc-950 text-zinc-200 font-sans pb-20 selection:bg-emerald-500 selection:text-white relative flex flex-col">
                     <div className="sticky top-0 z-20 bg-zinc-950/95 backdrop-blur-xl safari-layer-fix border-b border-zinc-800/60">
@@ -1396,24 +1395,7 @@
                                 </div>
                             </div>
 
-                            <div className="flex items-end gap-1 mb-6 h-16">
-                                {weekTrend.map((day, i) => (
-                                    <div key={i} className="flex-1 flex flex-col items-center gap-1 day-cell-hover">
-                                        <div className="w-full flex flex-col items-center justify-end h-10 overflow-hidden">
-                                            <div
-                                                className={`w-full rounded-t transition-all duration-300 bar-animate ${
-                                                    day.minutes >= dailyGoal
-                                                        ? 'bg-emerald-400'
-                                                        : day.minutes > 0
-                                                            ? 'bg-emerald-600'
-                                                            : 'bg-zinc-800'
-                                                }`}
-                                                style={{ height: `${Math.min(Math.max((day.minutes / 60) * 100, day.minutes > 0 ? 20 : 0), 100)}%` }}
-                                            ></div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                            {/* Week trend is available in Stats mode; hide it here to avoid looking like a floating "green block" on wide screens */}
                         </div>
 
                         {viewMode === 'dashboard' && (
