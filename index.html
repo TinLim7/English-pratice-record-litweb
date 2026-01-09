@@ -521,6 +521,12 @@
 
             const getDateKey = (y, m, d) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 
+            const getMinutes = (data) => {
+                if (!data) return 0;
+                if (typeof data === 'number') return data;
+                return data.total || 0;
+            };
+
             const getColorClass = (minutes) => {
                 if (!minutes || minutes <= 0) return 'bg-zinc-800/50 text-zinc-500';
                 if (minutes < 20) return 'bg-emerald-900/50 text-emerald-300 border border-emerald-800/50';
@@ -530,15 +536,15 @@
 
             const monthMinutes = Array.from({ length: daysInMonth }).reduce((sum, _, i) => {
                 const key = getDateKey(year, monthIndex, i + 1);
-                return sum + (reads[key] || 0);
+                return sum + getMinutes(reads[key]);
             }, 0);
             const activeDays = Array.from({ length: daysInMonth }).filter((_, i) => {
                 const key = getDateKey(year, monthIndex, i + 1);
-                return reads[key] && reads[key] > 0;
+                return getMinutes(reads[key]) > 0;
             }).length;
             const completedDays = Array.from({ length: daysInMonth }).filter((_, i) => {
                 const key = getDateKey(year, monthIndex, i + 1);
-                return reads[key] && reads[key] >= dailyGoal;
+                return getMinutes(reads[key]) >= dailyGoal;
             }).length;
 
             return (
@@ -598,7 +604,7 @@
                         {Array.from({ length: daysInMonth }).map((_, i) => {
                             const day = i + 1;
                             const key = getDateKey(year, monthIndex, day);
-                            const minutes = reads[key] || 0;
+                            const minutes = getMinutes(reads[key]);
                             const isToday = today.getDate() === day && today.getMonth() === monthIndex && today.getFullYear() === year;
 
                             return (
@@ -658,6 +664,12 @@
 
             const getDateKey = (y, m, d) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 
+            const getMinutes = (data) => {
+                if (!data) return 0;
+                if (typeof data === 'number') return data;
+                return data.total || 0;
+            };
+
             const weekStats = useMemo(() => {
                 const activeDays = weekTrend.filter(d => d.minutes > 0).length;
                 const totalMinutes = weekTrend.reduce((sum, d) => sum + d.minutes, 0);
@@ -672,7 +684,7 @@
                 let completedDays = 0;
                 for (let d = 1; d <= daysInMonth; d++) {
                     const key = getDateKey(year, today.getMonth(), d);
-                    const minutes = reads[key] || 0;
+                    const minutes = getMinutes(reads[key]);
                     totalMinutes += minutes;
                     if (minutes > 0) activeDays++;
                     if (minutes >= dailyGoal) completedDays++;
@@ -686,14 +698,14 @@
                     const d = new Date(today);
                     d.setDate(d.getDate() - i);
                     const key = getDateKey(d.getFullYear(), d.getMonth(), d.getDate());
-                    days.push({ date: d, minutes: reads[key] || 0 });
+                    days.push({ date: d, minutes: getMinutes(reads[key]) });
                 }
                 return days;
             }, [reads]);
 
             const achievementProgress = useMemo(() => {
                 const dates = Object.keys(reads);
-                const totalMinutes = Object.values(reads).reduce((sum, m) => sum + (typeof m === 'number' ? m : 0), 0);
+                const totalMinutes = Object.values(reads).reduce((sum, m) => sum + getMinutes(m), 0);
                 const totalHours = totalMinutes / 60;
 
                 let currentStreak = 0;
@@ -1015,8 +1027,15 @@
                     const parsed = JSON.parse(saved);
                     const migrated = {};
                     Object.keys(parsed).forEach(key => {
-                        if (parsed[key] === true) migrated[key] = 30;
-                        else if (typeof parsed[key] === 'number') migrated[key] = parsed[key];
+                        // 兼容旧数据格式
+                        if (parsed[key] === true) {
+                            migrated[key] = { total: 30, sessions: [{ time: '00:00', minutes: 30 }] };
+                        } else if (typeof parsed[key] === 'number') {
+                            migrated[key] = { total: parsed[key], sessions: [{ time: '00:00', minutes: parsed[key] }] };
+                        } else if (typeof parsed[key] === 'object' && parsed[key].total !== undefined) {
+                            // 已经是新格式
+                            migrated[key] = parsed[key];
+                        }
                     });
                     return migrated;
                 } catch (e) { return {}; }
@@ -1032,7 +1051,11 @@
 
             const checkAchievements = (newReads, newUnlockedRef) => {
                 const dates = Object.keys(newReads);
-                const totalMinutes = Object.values(newReads).reduce((acc, curr) => acc + (typeof curr === 'number' ? curr : 0), 0);
+                const totalMinutes = Object.values(newReads).reduce((acc, curr) => {
+                    if (typeof curr === 'number') return acc + curr;
+                    if (curr && typeof curr === 'object') return acc + (curr.total || 0);
+                    return acc;
+                }, 0);
                 const totalHours = totalMinutes / 60;
                 const totalDays = dates.length;
 
@@ -1077,7 +1100,23 @@
             useEffect(() => { localStorage.setItem('english-streak-goal', dailyGoal.toString()); }, [dailyGoal]);
 
             const getDateKey = (y, m, d) => `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-            const getDuration = (m, d) => reads[getDateKey(year, m, d)] || 0;
+            const getDuration = (m, d) => {
+                const data = reads[getDateKey(year, m, d)];
+                if (!data) return 0;
+                if (typeof data === 'number') return data;
+                return data.total || 0;
+            };
+            const getSessions = (m, d) => {
+                const data = reads[getDateKey(year, m, d)];
+                if (!data) return [];
+                if (typeof data === 'number') return [{ time: '00:00', minutes: data }];
+                return data.sessions || [];
+            };
+            const getMinutesFromData = (data) => {
+                if (!data) return 0;
+                if (typeof data === 'number') return data;
+                return data.total || 0;
+            };
 
             const goToPrevMonth = () => {
                 setSelectedMonth(prev => {
@@ -1099,15 +1138,75 @@
                 setTempDuration(currentDuration);
             };
 
+            const addSession = () => {
+                if (!editingDate) return;
+                const { monthIndex, day } = editingDate;
+                const dateKey = getDateKey(year, monthIndex, day);
+                const minutes = parseInt(tempDuration, 10);
+                if (isNaN(minutes) || minutes <= 0) return;
+
+                const now = new Date();
+                const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+                setReads(prev => {
+                    const newState = { ...prev };
+                    const existing = newState[dateKey];
+                    if (existing && typeof existing === 'object') {
+                        // 已有记录，添加新批次
+                        const newSessions = [...(existing.sessions || []), { time: timeStr, minutes }];
+                        const newTotal = newSessions.reduce((sum, s) => sum + s.minutes, 0);
+                        newState[dateKey] = { total: newTotal, sessions: newSessions };
+                    } else {
+                        // 新记录
+                        newState[dateKey] = { total: minutes, sessions: [{ time: timeStr, minutes }] };
+                    }
+                    return newState;
+                });
+                setTempDuration('');
+            };
+
+            const deleteSession = (sessionIndex) => {
+                if (!editingDate) return;
+                const { monthIndex, day } = editingDate;
+                const dateKey = getDateKey(year, monthIndex, day);
+
+                setReads(prev => {
+                    const newState = { ...prev };
+                    const existing = newState[dateKey];
+                    if (existing && typeof existing === 'object' && existing.sessions) {
+                        const newSessions = existing.sessions.filter((_, i) => i !== sessionIndex);
+                        if (newSessions.length === 0) {
+                            delete newState[dateKey];
+                        } else {
+                            const newTotal = newSessions.reduce((sum, s) => sum + s.minutes, 0);
+                            newState[dateKey] = { total: newTotal, sessions: newSessions };
+                        }
+                    }
+                    return newState;
+                });
+            };
+
             const saveDuration = () => {
                 if (!editingDate) return;
                 const { monthIndex, day } = editingDate;
                 const dateKey = getDateKey(year, monthIndex, day);
                 const minutes = parseInt(tempDuration, 10);
+
+                const now = new Date();
+                const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
                 setReads(prev => {
                     const newState = { ...prev };
-                    if (!isNaN(minutes) && minutes > 0) newState[dateKey] = minutes;
-                    else delete newState[dateKey];
+                    if (!isNaN(minutes) && minutes > 0) {
+                        const existing = newState[dateKey];
+                        if (existing && typeof existing === 'object') {
+                            const newSessions = [...(existing.sessions || []), { time: timeStr, minutes }];
+                            const newTotal = newSessions.reduce((sum, s) => sum + s.minutes, 0);
+                            newState[dateKey] = { total: newTotal, sessions: newSessions };
+                        } else {
+                            newState[dateKey] = { total: minutes, sessions: [{ time: timeStr, minutes }] };
+                        }
+                    }
                     return newState;
                 });
                 setEditingDate(null);
@@ -1142,7 +1241,7 @@
                     days.push({
                         day: d.getDate(),
                         weekday: d.toLocaleDateString('en-US', { weekday: 'short' }),
-                        minutes: reads[key] || 0,
+                        minutes: getMinutesFromData(reads[key]),
                         isToday: i === 0
                     });
                 }
@@ -1160,18 +1259,18 @@
             const todayProgress = useMemo(() => {
                 const today = new Date();
                 const key = getDateKey(today.getFullYear(), today.getMonth(), today.getDate());
-                const todayMinutes = reads[key] || 0;
+                const todayMinutes = getMinutesFromData(reads[key]);
                 const percentage = Math.min((todayMinutes / dailyGoal) * 100, 100);
                 return { minutes: todayMinutes, percentage };
             }, [reads, dailyGoal]);
 
             const stats = useMemo(() => {
                 const dates = Object.keys(reads).sort();
-                const totalMinutes = Object.values(reads).reduce((acc, curr) => acc + (typeof curr === 'number' ? curr : 0), 0);
+                const totalMinutes = Object.values(reads).reduce((acc, curr) => acc + getMinutesFromData(curr), 0);
                 let currentStreak = 0;
                 let checkDate = new Date();
                 const todayKey = getDateKey(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate());
-                const todayMinutes = reads[todayKey] || 0;
+                const todayMinutes = getMinutesFromData(reads[todayKey]);
                 if (!reads[todayKey]) checkDate.setDate(checkDate.getDate() - 1);
                 while (true) {
                     const dKey = getDateKey(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate());
@@ -1432,25 +1531,57 @@
 
                     {editingDate && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in">
-                            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl shadow-2xl w-full max-w-sm">
-                                <div className="flex justify-between items-center mb-5">
-                                    <h3 className="text-lg font-semibold text-white">{months[editingDate.monthIndex]} {editingDate.day}</h3>
+                            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl shadow-2xl w-full max-w-sm max-h-[80vh] overflow-y-auto">
+                                <div className="flex justify-between items-center mb-4">
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-white">{months[editingDate.monthIndex]} {editingDate.day}</h3>
+                                        <p className="text-xs text-zinc-500 mt-0.5">
+                                            总计: <span className="text-emerald-400 font-medium">{getDuration(editingDate.monthIndex, editingDate.day)}分钟</span>
+                                        </p>
+                                    </div>
                                     <button onClick={() => setEditingDate(null)} className="p-2 rounded-full text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800 transition-all duration-200 group">
                                         <Icons.X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
                                     </button>
                                 </div>
+
+                                {/* 批次记录列表 */}
+                                {getSessions(editingDate.monthIndex, editingDate.day).length > 0 && (
+                                    <div className="mb-4">
+                                        <h4 className="text-xs text-zinc-500 mb-2 font-medium">学习记录</h4>
+                                        <div className="space-y-2 max-h-40 overflow-y-auto">
+                                            {getSessions(editingDate.monthIndex, editingDate.day).map((session, index) => (
+                                                <div key={index} className="flex items-center justify-between bg-zinc-800/50 rounded-lg px-3 py-2 group">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-xs text-zinc-500 font-mono">{session.time}</span>
+                                                        <span className="text-sm text-white font-medium">{session.minutes}分钟</span>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => deleteSession(index)}
+                                                        className="p-1 text-zinc-600 hover:text-red-400 rounded transition-colors opacity-0 group-hover:opacity-100"
+                                                        title="删除此记录"
+                                                    >
+                                                        <Icons.X className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* 添加新记录 */}
                                 <div className="space-y-3">
+                                    <h4 className="text-xs text-zinc-500 font-medium">添加学习时间</h4>
                                     <div className="flex gap-2">
                                         <input
                                             type="number"
                                             autoFocus
-                                            placeholder="Minutes..."
+                                            placeholder="分钟数..."
                                             className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white text-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
                                             value={tempDuration}
                                             onChange={(e) => setTempDuration(e.target.value)}
-                                            onKeyDown={(e) => e.key === 'Enter' && saveDuration()}
+                                            onKeyDown={(e) => e.key === 'Enter' && addSession()}
                                         />
-                                        <button onClick={saveDuration} className="bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold px-4 rounded-xl transition-colors active:scale-95">
+                                        <button onClick={addSession} className="bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-bold px-4 rounded-xl transition-colors active:scale-95" title="添加记录">
                                             <Icons.Check className="w-6 h-6" />
                                         </button>
                                     </div>
@@ -1466,6 +1597,14 @@
                                         ))}
                                     </div>
                                 </div>
+
+                                {/* 关闭按钮 */}
+                                <button
+                                    onClick={() => setEditingDate(null)}
+                                    className="w-full mt-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-xl text-sm font-medium transition-colors"
+                                >
+                                    完成
+                                </button>
                             </div>
                         </div>
                     )}
